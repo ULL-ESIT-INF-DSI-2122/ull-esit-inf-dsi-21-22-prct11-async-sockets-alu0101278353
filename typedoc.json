@@ -1,0 +1,8 @@
+{
+  "entryPoints": [
+      "./src/class/note-app.ts",
+      "./src/class/Note.ts",
+      "./src/class/User.ts"
+  ],
+  "out": "/home/usuario/p9/docs"
+}
