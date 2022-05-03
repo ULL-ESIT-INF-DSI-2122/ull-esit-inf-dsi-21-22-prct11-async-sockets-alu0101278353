@@ -1,7 +1,7 @@
 {
-  "name": "practica9",
+  "name": "practica11",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cliente y servidor para una aplicación de procesamiento de notas de texto",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
