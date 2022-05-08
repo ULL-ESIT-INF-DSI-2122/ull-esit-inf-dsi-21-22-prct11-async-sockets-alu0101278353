@@ -5,31 +5,42 @@
 Para desarrollar esta práctica tal y como se nos ha solicitado de que el servidor tiene que ser responsable de hacer persistente la lista de notas de cada usuario, es decir que este gestione la creación, eliminación, listado y leer una nota cada vez que el cliente solicite algunas de estas acciones. Para ello en el fichero `server.ts` tenemos el sigueinte código, el cual se irá explicando por partes, en primer lugar tenemos:
 
 ```ts
-// Ruta del directorio de notas
-const pathFile = '/home/usuario/p11/src/Notes/';
 /**
- * Array que contiene a los usuarios con sus notas.
+ * Clase que representa a un servidor
  */
- let users: User[] = [];
- /**
-  * __Función que recupera las notas de los usuarios__
-  * 
-  * Haciendo el uso del sistema de fichero de node, recuperamos los usuarios y sus notas
-  * para poder meterlos en el array 'users'. Esto es para cuando un usuario quiera listar las notas
-  * o poder ver el contenido que tiene una nota en especifico.
-  */
- const setUsers = () => {
-   const file = fs.readdirSync(pathFile);
-   file.map((user) => {
-     const newUser = new User(user);
-     const notes = fs.readdirSync(pathFile+user);
-     notes.map((note) => {
-       const newNote = fs.readFileSync(pathFile+user+'/'+note, {encoding: 'utf8', flag: 'r'});
-       newUser.setNote(JSON.parse(newNote));
-     });
-     users = [...users, newUser];
-   });
- };
+export class Server {
+  constructor() {}
+  /**
+   * Inicia el Servidor
+   */
+  public start() {
+    /**
+     * Ruta del directorio de notas
+     */
+    const pathFile = '/home/usuario/p11/src/Notes/';
+    /**
+     * Array que contiene a los usuarios con sus notas.
+     */
+    let users: User[] = [];
+    /**
+      * __Función que recupera las notas de los usuarios__
+      * 
+      * Haciendo el uso del sistema de fichero de node, recuperamos los usuarios y sus notas
+      * para poder meterlos en el array 'users'. Esto es para cuando un usuario quiera listar las notas
+      * o poder ver el contenido que tiene una nota en especifico.
+      */
+    const setUsers = () => {
+      const file = fs.readdirSync(pathFile);
+      file.map((user) => {
+        const newUser = new User(user);
+        const notes = fs.readdirSync(pathFile+user);
+        notes.map((note) => {
+          const newNote = fs.readFileSync(pathFile+user+'/'+note, {encoding: 'utf8', flag: 'r'});
+          newUser.setNote(JSON.parse(newNote));
+        });
+        users = [...users, newUser];
+      });
+    };
 ```
 
 Luego, haciendo uso del módulo **net** de node, creamos el servidor para que pueda escuchar las peticiones del cliente por el puerto `60300`:
@@ -262,135 +273,144 @@ Ahora vamos a ver como el el cliente realiza la petición al server y como reacc
 
 ```ts
 /**
- * Cliente que escucha en el puerto 60300
+ * Clase que representa a un cliente
  */
-const client = net.connect({port: 60300});
+export class Client {
+  constructor() {}
+  /**
+   * Inicia el cliente
+   */
+  public start() {
+    /**
+     * Cliente que escucha en el puerto 60300
+     */
+    const client = net.connect({port: 60300});
 
-/**
- * Agrega una nota, y escribe en el server  el tipo de solicitud.
- */
-yargs.command({
-  command: 'add',
-  describe: 'Add a new note',
-  builder: {
-    user: {
-      describe: 'Name User',
-      demandOption: true,
-      type: 'string',
-    },
-    title: {
-      describe: 'Note title',
-      demandOption: true,
-      type: 'string',
-    },
-    body: {
-      describe: 'Body from the note',
-      demandOption: true,
-      type: 'string',
-    },
-    color: {
-      describe: 'Color from the note',
-      demandOption: true,
-      type: 'string',
-    },
-  },
-  handler(argv) {
-    if (typeof argv.title === 'string' && typeof argv.user === 'string' && typeof argv.body === 'string' && typeof argv.color === 'string') {
-      const request: RequestType = {
-        type: 'add',
-        user: argv.user,
-        title: argv.title,
-        body: argv.body,
-        color: argv.color,
-      };
-      client.write(JSON.stringify(request)+ '\n');
-    }
-  },
-});
+    /**
+     * Agrega una nota, y escribe en el server  el tipo de solicitud.
+     */
+    yargs.command({
+      command: 'add',
+      describe: 'Add a new note',
+      builder: {
+        user: {
+          describe: 'Name User',
+          demandOption: true,
+          type: 'string',
+        },
+        title: {
+          describe: 'Note title',
+          demandOption: true,
+          type: 'string',
+        },
+        body: {
+          describe: 'Body from the note',
+          demandOption: true,
+          type: 'string',
+        },
+        color: {
+          describe: 'Color from the note',
+          demandOption: true,
+          type: 'string',
+        },
+      },
+      handler(argv) {
+        if (typeof argv.title === 'string' && typeof argv.user === 'string' && typeof argv.body === 'string' && typeof argv.color === 'string') {
+          const request: RequestType = {
+            type: 'add',
+            user: argv.user,
+            title: argv.title,
+            body: argv.body,
+            color: argv.color,
+          };
+          client.write(JSON.stringify(request)+ '\n');
+        }
+      },
+    });
 
- /**
- * Elimina nota de la lista, y escribe en el server  el tipo de solicitud.
- */
- yargs.command({
-  command: 'remove',
-  describe: 'Delete a note',
-  builder: {
-    user: {
-      describe: 'Name User',
-      demandOption: true,
-      type: 'string',
-    },
-    title: {
-      describe: 'Note title',
-      demandOption: true,
-      type: 'string',
-    },
-  },
-  handler(argv) {
-    if (typeof argv.title === 'string' && typeof argv.user === 'string') {
-      const request: RequestType = {
-        type: 'remove',
-        user: argv.user,
-        title: argv.title,
-      };
-      client.write(JSON.stringify(request)+ '\n');
-    }
-  },
-});
+    /**
+     * Elimina nota de la lista, y escribe en el server  el tipo de solicitud.
+     */
+    yargs.command({
+      command: 'remove',
+      describe: 'Delete a note',
+      builder: {
+        user: {
+          describe: 'Name User',
+          demandOption: true,
+          type: 'string',
+        },
+        title: {
+          describe: 'Note title',
+          demandOption: true,
+          type: 'string',
+        },
+      },
+      handler(argv) {
+        if (typeof argv.title === 'string' && typeof argv.user === 'string') {
+          const request: RequestType = {
+            type: 'remove',
+            user: argv.user,
+            title: argv.title,
+          };
+          client.write(JSON.stringify(request)+ '\n');
+        }
+      },
+    });
 
-/**
- * Lista las notas que tiene el usuario, y escribe en el server  el tipo de solicitud.
- */
- yargs.command({
-  command: 'list',
-  describe: 'List a note',
-  builder: {
-    user: {
-      describe: 'Name User',
-      demandOption: true,
-      type: 'string',
-    },
-  },
-  handler(argv) {
-    if (typeof argv.user === 'string') {
-      const request: RequestType = {
-        type: 'list',
-        user: argv.user,
-      };
-      client.write(JSON.stringify(request)+ '\n');
-    }
-  },
-});
+    /**
+     * Lista las notas que tiene el usuario, y escribe en el server  el tipo de solicitud.
+     */
+    yargs.command({
+      command: 'list',
+      describe: 'List a note',
+      builder: {
+        user: {
+          describe: 'Name User',
+          demandOption: true,
+          type: 'string',
+        },
+      },
+      handler(argv) {
+        if (typeof argv.user === 'string') {
+          const request: RequestType = {
+            type: 'list',
+            user: argv.user,
+          };
+          client.write(JSON.stringify(request)+ '\n');
+        }
+      },
+    });
 
-/**
-* Lee el contenido de la nota del usuario, y escribe en el server el tipo de solicitud.
-*/
-yargs.command({
-  command: 'read',
-  describe: 'Read the content of the note',
-  builder: {
-    user: {
-      describe: 'Name User',
-      demandOption: true,
-      type: 'string',
-    },
-    title: {
-      describe: 'Note title',
-      demandOption: true,
-      type: 'string',
-    },
-  },
-  handler(argv) {
-    if (typeof argv.user === 'string' && typeof argv.title === 'string') {
-      const request: RequestType = {
-        type: 'read',
-        user: argv.user,
-        title: argv.title,
-      };
-      client.write(JSON.stringify(request)+ '\n');
-    }
-  },
-});
+    /**
+    * Lee el contenido de la nota del usuario, y escribe en el server el tipo de solicitud.
+    */
+    yargs.command({
+      command: 'read',
+      describe: 'Read the content of the note',
+      builder: {
+        user: {
+          describe: 'Name User',
+          demandOption: true,
+          type: 'string',
+        },
+        title: {
+          describe: 'Note title',
+          demandOption: true,
+          type: 'string',
+        },
+      },
+      handler(argv) {
+        if (typeof argv.user === 'string' && typeof argv.title === 'string') {
+          const request: RequestType = {
+            type: 'read',
+            user: argv.user,
+            title: argv.title,
+          };
+          client.write(JSON.stringify(request)+ '\n');
+        }
+      },
+    });
 ```
 
 Cuando ocurre un evento de tipo `data`, lo que hace es lo siguiente:

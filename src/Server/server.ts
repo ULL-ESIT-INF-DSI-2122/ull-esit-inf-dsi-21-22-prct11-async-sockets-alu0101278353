@@ -4,11 +4,18 @@ import * as note from '../Class/Note';
 import { User } from '../Class/User';
 import { ResponseType } from '../Types/response';
 
+/**
+ * Clase que representa a un servidor
+ */
 export class Server {
   constructor() {}
-
+  /**
+   * Inicia el Servidor
+   */
   public start() {
-    // Ruta del directorio de notas
+    /**
+     * Ruta del directorio de notas
+     */
     const pathFile = '/home/usuario/p11/src/Notes/';
     /**
      *Array que contiene a los usuarios con sus notas.

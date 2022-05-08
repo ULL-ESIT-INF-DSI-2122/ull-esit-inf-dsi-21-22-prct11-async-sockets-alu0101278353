@@ -1,8 +1,10 @@
 {
   "entryPoints": [
-      "./src/class/note-app.ts",
-      "./src/class/Note.ts",
-      "./src/class/User.ts"
+      "./src/Client/client-note-app.ts",
+      "./src/Class/Note.ts",
+      "./src/Class/User.ts",
+      "./src/Types/request.ts",
+      "./src/Types/response.ts"
   ],
-  "out": "/home/usuario/p9/docs"
+  "out": "/home/usuario/p11/documentation"
 }

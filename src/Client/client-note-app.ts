@@ -3,9 +3,14 @@ import * as net from 'net';
 import { RequestType } from '../Types/request';
 import chalk = require('chalk');
 
+/**
+ * Clase que representa a un cliente
+ */
 export class Client {
   constructor() {}
-
+  /**
+   * Inicia el cliente
+   */
   public start() {
     /**
      * Cliente que escucha en el puerto 60300
