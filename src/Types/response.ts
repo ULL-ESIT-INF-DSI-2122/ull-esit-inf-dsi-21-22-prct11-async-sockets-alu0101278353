@@ -1,5 +1,5 @@
-import { Note } from './Class/Note';
-import { User } from './Class/User';
+import { Note } from '../Class/Note';
+import { User } from '../Class/User';
 
 /**
  * Tipo de respuesta para el cliente

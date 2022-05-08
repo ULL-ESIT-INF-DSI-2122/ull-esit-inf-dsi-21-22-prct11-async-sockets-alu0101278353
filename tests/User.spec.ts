@@ -4,7 +4,7 @@ import {User} from '../src/Class/User';
 import {Note} from '../src/Class/Note';
 
 
-describe('add function tests', () => {
+describe('Prueba de la clase User', () => {
   const elvis = new User('elvis');
   // const fer = new User('fer');
   const nota1 = new Note('Tema1', 'Funciones', 'red');
